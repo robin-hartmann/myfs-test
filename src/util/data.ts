@@ -1,9 +1,11 @@
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
+import { dirname, resolve } from 'path';
+import { sync as getPkgRoot } from 'pkg-dir';
 
-import config from 'config';
-
-const LOREM_IPSUM = readFileSync(config.RESOURCES.LOREM_IPSUM);
+const LOREM_IPSUM_NAME = 'lorem-ipsum-1024.txt';
+const PKG_ROOT = getPkgRoot(__dirname) as string;
+const PKG_RES = resolve(PKG_ROOT, 'res');
+const LOREM_IPSUM = readFileSync(resolve(PKG_RES, LOREM_IPSUM_NAME));
 
 export const generateData = (byteCount: number) => {
   const data = Buffer.allocUnsafe(byteCount);

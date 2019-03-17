@@ -1,6 +1,6 @@
 # MyFS Functional Tests
 
-The functional tests for MyFS are built using TypeScript and AVA.
+These are the functional tests for the FUSE-based file system [MyFS](https://github.com/luluhue/betriebsysteme).
 
 ## Getting Started
 
@@ -12,22 +12,17 @@ These instructions will get you a copy of the project up and running on your loc
 
 * [Node.js](https://nodejs.org) - JavaScript run-time environment
 
+#### Environment Variables
+
+* `MYFS_BIN_MKFS` - Path to the `mkfs` executable
+* `MYFS_BIN_MOUNT` - Path to the `mount` executable
+
 #### VS Code Extensions
 
 This project is intended to be used with Visual Studio Code and the following extensions are recommended:
 
 * [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) - Integrates ESLint JavaScript into VS Code
 * [TSLint](https://marketplace.visualstudio.com/items?itemName=eg2.tslint) - TSLint support for Visual Studio Code
-
-### Preparing the Project
-
-To download required packages, run the following command in the directory containing the `package.json` file:
-
-```node
-npm install
-```
-
-⚠️ This has to be done each time when the project's dependencies change. ⚠️
 
 ## Running the Tests
 
@@ -43,7 +38,7 @@ npm test
 
 ### With VS Code
 
-This project includes task definitions for Visual Studio Code. Just open the parent folder of the `package.json` file in VS Code and then run the task `Run tests`.
+This project includes task definitions for Visual Studio Code. Just open the folder containing the `package.json` file in VS Code and then run the task `Run tests`.
 
 ## Debugging with VS Code
 
