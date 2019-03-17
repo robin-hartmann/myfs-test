@@ -21,7 +21,7 @@
         "<node_internals>/**/*.js"
       ],
       "smartStep": false,
-      "outputCapture": "std"‚
+      "outputCapture": "std"
     }
   ]
 }
