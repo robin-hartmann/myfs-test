@@ -5,6 +5,7 @@
 !/scripts/**/*
 !/transpiled/**/*
 !/ava.config.js
+!/tsconfig.json
 
 # README, LICENSE and package.json are added automatically
 # package-lock.json should not be published
