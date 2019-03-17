@@ -1,0 +1,11 @@
+# ignore everything
+*
+
+# then whitelist needed files
+!/scripts/**/*
+!/transpiled/**/*
+!/ava.config.js
+
+# README, LICENSE and package.json are added automatically
+# package-lock.json should not be published
+# (see https://docs.npmjs.com/files/package-lock.json#description)
