@@ -2,6 +2,7 @@
 *
 
 # then whitelist needed files
+!/res/**/*
 !/scripts/**/*
 !/transpiled/**/*
 !/ava.config.js
