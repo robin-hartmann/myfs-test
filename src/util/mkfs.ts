@@ -41,6 +41,7 @@ export const mkfs = async (t: ExecutionContext, initFiles: FileInfo[] = []) => {
   }
 
   try {
+    // @todo pipe stdout and stderr into logfile
     await exec(`"${BIN_MKFS}" "${t.context.containerFile}" ${initFilesArg}`);
   } catch (e) {
     throw new Error(`Error while creating container\n${e}`);

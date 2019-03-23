@@ -13,7 +13,7 @@ const configBase = {
 // but files need to be transpiled after each change
 const configProper = {
   files: [
-    'transpiled/spec/**/*.spec.js',
+    'transpiled/src/spec/**/*.spec.js',
   ],
 };
 
