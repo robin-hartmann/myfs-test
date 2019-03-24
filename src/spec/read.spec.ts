@@ -33,7 +33,7 @@ test('root directory has proper attributes', (t) => {
   const userInfo = getUserInfo();
 
   t.is(stats.mode & fsConstants.S_IFMT, fsConstants.S_IFDIR);
-  t.is(stats.mode & ~fsConstants.S_IFMT, 0o555);
+  t.is(stats.mode & ~fsConstants.S_IFMT, 0o755);
   t.is(stats.nlink, 2);
 
   // @todo is this needed?
@@ -66,7 +66,7 @@ test.skip('all files have proper attributes', (t) => {
     t.is(stats.uid, userInfo.uid);
     t.is(stats.gid, userInfo.gid);
     t.is(stats.mode & fsConstants.S_IFMT, fsConstants.S_IFREG);
-    t.is(stats.mode & ~fsConstants.S_IFMT, 0o444);
+    t.is(stats.mode & ~fsConstants.S_IFMT, 0o644);
     t.is(stats.nlink, 1);
     // @todo check other attributes and content
   });
