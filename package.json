@@ -30,8 +30,10 @@
   },
   "scripts": {
     "prepublishOnly": "npm run build",
-    "prebuild": "npm run lint-js && npm run lint-ts && npm run clean",
-    "build": "echo \"Building...\" && tsc && echo \"OK\"",
+    "prebuild": "npm run lint-js && npm run lint-ts",
+    "build": "npm run build-only",
+    "prebuild-only": "npm run clean",
+    "build-only": "echo \"Building...\" && tsc && echo \"OK\"",
     "clean": "echo \"Cleaning...\" && rm -rf ./transpiled && echo \"OK\"",
     "lint-js": "echo \"Linting JavaScript...\" && eslint *.js && echo \"OK\"",
     "lint-ts": "echo \"Linting TypeScript...\" && tslint --project . && echo \"OK\"",
