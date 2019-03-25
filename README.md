@@ -1,6 +1,6 @@
-# MyFS Functional Tests
+# myfs-test
 
-These are the functional tests for the FUSE-based file system [MyFS](https://github.com/luluhue/betriebsysteme).
+Functional tests for the FUSE-based file system [MyFS](https://github.com/luluhue/betriebsysteme)
 
 ## Getting Started
 
