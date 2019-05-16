@@ -5,7 +5,7 @@ import { userInfo as getUserInfo } from 'os';
 
 import { mkfs } from 'util/mkfs';
 import { mount, unmount, isMounted } from 'util/mount';
-import { test, cleanup, init } from 'util/test';
+import { test, cleanup, init, setSuccess } from 'util/test';
 import { getPath } from 'util/fs';
 
 test.serial.before('init', init);
@@ -24,6 +24,7 @@ test.serial.after.always('unmounts properly', async (t) => {
   t.false(await isMounted(t));
 });
 
+test.serial.after('set success', setSuccess);
 test.serial.after.always('cleanup', cleanup);
 
 test.serial.todo('allows to open a maximum of 64 files');

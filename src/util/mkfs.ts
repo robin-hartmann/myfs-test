@@ -1,13 +1,11 @@
 import { exec as cbBasedExec } from 'child_process';
 import { promisify } from 'util';
-import { tmpNameSync, setGracefulCleanup, dirSync } from 'tmp';
-import { unlinkSync, existsSync } from 'fs';
+import { tmpNameSync, dirSync } from 'tmp';
+import { existsSync } from 'fs';
 import { resolve } from 'path';
 
-import { ExecutionContext, FileInfo } from 'util/test';
+import { ExecutionContext, FileInfo, addToCleanup } from 'util/test';
 import { generateFile } from 'util/data';
-
-setGracefulCleanup();
 
 const exec = promisify(cbBasedExec);
 
@@ -21,14 +19,15 @@ export const mkfs = async (t: ExecutionContext, initFiles: FileInfo[] = []) => {
 
   const containerFile = tmpNameSync({ prefix: 'myfs-container-', postfix: '.bin' });
 
+  addToCleanup(t, containerFile);
   t.context.containerFile = containerFile;
-  t.context.cleanupCbs.push(() => unlinkSync(t.context.containerFile));
 
   let initFilesArg = '';
 
   if (initFiles.length) {
-    const initFilesDir = dirSync({ prefix: 'myfs-init-files-', unsafeCleanup: true });
+    const initFilesDir = dirSync({ prefix: 'myfs-init-files-', unsafeCleanup: true, keep: true });
 
+    addToCleanup(t, initFilesDir);
     t.context.initFilesDir = initFilesDir.name;
     t.context.initFiles = initFiles;
 
