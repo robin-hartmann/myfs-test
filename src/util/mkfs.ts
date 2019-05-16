@@ -1,10 +1,9 @@
 import { exec as cbBasedExec } from 'child_process';
 import { promisify } from 'util';
-import { tmpNameSync, dirSync } from 'tmp';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
-import { ExecutionContext, FileInfo, addToCleanup } from 'util/test';
+import { ExecutionContext, FileInfo, getTmpName, getTmpDir } from 'util/test';
 import { generateFile } from 'util/data';
 
 const exec = promisify(cbBasedExec);
@@ -17,17 +16,15 @@ export const mkfs = async (t: ExecutionContext, initFiles: FileInfo[] = []) => {
     throw new Error("The location of the 'mkfs' executable wasn't specified or the specified file didn't exists. Please set the environment variable 'MYFS_BIN_MKFS' to the location of the 'mkfs' executable.");
   }
 
-  const containerFile = tmpNameSync({ prefix: 'myfs-container-', postfix: '.bin' });
+  const containerFile = getTmpName(t, 'container', '.bin');
 
-  addToCleanup(t, containerFile);
   t.context.containerFile = containerFile;
 
   let initFilesArg = '';
 
   if (initFiles.length) {
-    const initFilesDir = dirSync({ prefix: 'myfs-init-files-', unsafeCleanup: true, keep: true });
+    const initFilesDir = getTmpDir(t, 'init-files');
 
-    addToCleanup(t, initFilesDir);
     t.context.initFilesDir = initFilesDir.name;
     t.context.initFiles = initFiles;
 

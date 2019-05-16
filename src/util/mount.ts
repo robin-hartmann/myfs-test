@@ -1,9 +1,8 @@
 import { exec as cbBasedExec } from 'child_process';
 import { realpathSync, existsSync } from 'fs';
-import { dirSync, fileSync } from 'tmp';
 import { promisify } from 'util';
 
-import { ExecutionContext, addToCleanup } from 'util/test';
+import { ExecutionContext, getTmpFile, getTmpDir } from 'util/test';
 import { umount, isMounted as promiseBasedIsMounted } from 'util/umount/umount';
 
 const exec = promisify(cbBasedExec);
@@ -16,10 +15,9 @@ export const mount = async (t: ExecutionContext) => {
     throw new Error("The location of the 'mount' executable wasn't specified or the specified file didn't exists. Please set the environment variable 'MYFS_BIN_MOUNT' to the location of the 'mount' executable.");
   }
 
-  const logFile = fileSync({ prefix: 'myfs-log-', postfix: '.log', keep: true });
-  const mountDir = dirSync({ prefix: 'myfs-mount-', unsafeCleanup: true, keep: true });
+  const logFile = getTmpFile(t, 'log', '.log');
+  const mountDir = getTmpDir(t, 'mount');
 
-  addToCleanup(t, logFile, mountDir);
   t.context.logFile = logFile.name;
   // required, because /tmp is just a link to /private/tmp
   // and umount doesn't seem to work when used on links
