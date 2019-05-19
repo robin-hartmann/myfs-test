@@ -42,12 +42,24 @@ export function cleanup(t: TypedExecutionContext) {
     mountDir: t.context.mountDir,
   });
 
+  let error;
+
   if (t.context.success) {
-    t.context.cleanupCbs.forEach(cleanupCb => cleanupCb());
-    t.log('created files have been cleaned up');
-  } else {
-    t.log("due to failure, the created files won't be cleaned up automatically");
-    // tslint:disable-next-line: max-line-length
-    t.log(`to delete all files created by myfs-test, just run "rm -rf ${TMP_DIR}/${TMP_BASE_PREFIX}*"`);
+    try {
+      t.context.cleanupCbs.forEach(cleanupCb => cleanupCb());
+      t.log('created files have been cleaned up');
+
+      return;
+    } catch (e) {
+      error = e;
+    }
+  }
+
+  t.log("due to failure, the created files won't be cleaned up automatically");
+  // tslint:disable-next-line: max-line-length
+  t.log(`to delete all files created by myfs-test, just run "rm -rf ${TMP_DIR}/${TMP_BASE_PREFIX}*"`);
+
+  if (error) {
+    throw error;
   }
 }
