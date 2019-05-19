@@ -1,5 +1,10 @@
 {
   "extends": "tslint-config-airbnb",
+  "rules": {
+    "await-promise": true,
+    "no-floating-promises": true,
+    "promise-function-async": true
+  },
   "linterOptions": {
     "exclude": [
       "node_modules/**"

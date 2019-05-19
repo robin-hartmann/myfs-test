@@ -2,8 +2,8 @@ import { umount as cbBasedUmount, isMounted as cbBasedIsMounted } from 'umount';
 
 import { IUmount, IsMountedResult } from './interface';
 
-const umount = (device: string) =>
-  new Promise<void>((resolve, reject) =>
+async function umount(device: string) {
+  return new Promise<void>((resolve, reject) =>
     cbBasedUmount(device, (error) => {
       if (error) {
         reject(error);
@@ -11,9 +11,10 @@ const umount = (device: string) =>
         resolve();
       }
     }));
+}
 
-const isMounted = (device: string) =>
-  new Promise<IsMountedResult>((resolve, reject) =>
+async function isMounted(device: string) {
+  return new Promise<IsMountedResult>((resolve, reject) =>
     cbBasedIsMounted(device, (error, isMounted) => {
       if (error) {
         reject(error);
@@ -21,6 +22,7 @@ const isMounted = (device: string) =>
         resolve(isMounted as boolean);
       }
     }));
+}
 
 const api: IUmount = {
   umount,
