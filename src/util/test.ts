@@ -1,5 +1,5 @@
 import ava, { ExecutionContext as GenericExecutionContext, TestInterface } from 'ava';
-import { TMP_DIR, TMP_BASE_PREFIX } from 'util/tmp';
+import { TMP_DIR, TMP_BASE_PREFIX, createFile, createDir, getName } from 'util/tmp';
 
 import { mount, unmount, isMounted } from 'util/mount';
 import { mkfs } from 'util/mkfs';
@@ -27,36 +27,55 @@ export type TypedExecutionContext = GenericExecutionContext<Context>;
 
 const test = ava as TestInterface<Context>;
 
-export function initializeTest(initFiles?: FileInfo[]) {
-  test.serial.beforeEach('init', init);
+export function initializeTest(sharedContext: boolean = false, initFiles?: FileInfo[]) {
+  const before = sharedContext
+    ? test.serial.before
+    : test.serial.beforeEach;
+
+  const after = sharedContext
+    ? test.serial.after
+    : test.serial.afterEach;
+
+  before('init', t => init(t, initFiles));
 
   const createContainerTitle = initFiles
     ? `creates container with ${initFiles.length} files`
     : 'creates empty container';
 
-  test.serial.beforeEach(createContainerTitle, async (t) => {
-    await mkfs(t, initFiles);
-  });
+  before(createContainerTitle, mkfs);
 
-  test.serial.beforeEach('mounts', async (t) => {
+  before('mounts', async (t) => {
+    t.false(await isMounted(t));
     await mount(t);
     t.true(await isMounted(t));
   });
 
-  test.serial.afterEach.always('unmounts', async (t) => {
+  after.always('unmounts', async (t) => {
+    t.true(await isMounted(t));
     await unmount(t);
     t.false(await isMounted(t));
   });
 
-  test.serial.afterEach('set success', setSuccess);
-  test.serial.afterEach.always('cleanup', cleanup);
+  after('set success', setSuccess);
+  after.always('cleanup', cleanup);
 
   return test;
 }
 
-function init(t: TypedExecutionContext) {
-  t.context.initFiles = [];
+function init(t: TypedExecutionContext, initFiles: FileInfo[] = []) {
+  t.context.initFiles = initFiles;
   t.context.cleanupCbs = [];
+
+  // required for mkfs
+  t.context.containerPath = getName(t, 'container', '.bin');
+
+  if (t.context.initFiles.length) {
+    t.context.initFilesDir = createDir(t, 'init-files');
+  }
+
+  // required for mount
+  t.context.logFile = createFile(t, 'log', '.log');
+  t.context.mountDir = createDir(t, 'mount');
 }
 
 function setSuccess(t: TypedExecutionContext) {

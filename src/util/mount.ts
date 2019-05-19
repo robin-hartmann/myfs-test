@@ -4,7 +4,6 @@ import { promisify } from 'util';
 
 import { TypedExecutionContext } from 'util/test';
 import { umount, isMounted as promiseBasedIsMounted } from 'util/umount/umount';
-import { createFile, createDir } from 'util/tmp';
 
 const exec = promisify(cbBasedExec);
 
@@ -19,9 +18,6 @@ export const mount = async (t: TypedExecutionContext) => {
   if (!t.context.containerPath) {
     throw new Error('Context is missing required attribute "containerFile"');
   }
-
-  t.context.logFile = createFile(t, 'log', '.log');
-  t.context.mountDir = createDir(t, 'mount');
 
   try {
     // tslint:disable-next-line: max-line-length

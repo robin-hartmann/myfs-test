@@ -3,13 +3,12 @@ import { promisify } from 'util';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
-import { TypedExecutionContext, FileInfo } from 'util/test';
+import { TypedExecutionContext } from 'util/test';
 import { generateFile } from 'util/data';
-import { getName, createDir } from 'util/tmp';
 
 const exec = promisify(cbBasedExec);
 
-export const mkfs = async (t: TypedExecutionContext, initFiles: FileInfo[] = []) => {
+export const mkfs = async (t: TypedExecutionContext) => {
   const BIN_MKFS = process.env.MYFS_BIN_MKFS;
 
   if (!(BIN_MKFS && existsSync(BIN_MKFS))) {
@@ -17,21 +16,14 @@ export const mkfs = async (t: TypedExecutionContext, initFiles: FileInfo[] = [])
     throw new Error("The location of the 'mkfs' executable wasn't specified or the specified file didn't exists. Please set the environment variable 'MYFS_BIN_MKFS' to the location of the 'mkfs' executable.");
   }
 
-  t.context.containerPath = getName(t, 'container', '.bin');
-
   let initFilesArg = '';
 
-  if (initFiles.length) {
-    t.context.initFilesDir = createDir(t, 'init-files');
-    t.context.initFiles = initFiles;
+  t.context.initFiles.forEach((file) => {
+    const filePathAbs = resolve(t.context.initFilesDir, file.path);
 
-    initFiles.forEach((file) => {
-      const filePathAbs = resolve(t.context.initFilesDir, file.path);
-
-      generateFile(filePathAbs, file.byteCount);
-      initFilesArg += ` "${filePathAbs}"`;
-    });
-  }
+    generateFile(filePathAbs, file.byteCount);
+    initFilesArg += ` "${filePathAbs}"`;
+  });
 
   try {
     // @todo pipe stdout and stderr into logfile
