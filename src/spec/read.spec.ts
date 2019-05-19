@@ -8,24 +8,24 @@ import { mount, unmount, isMounted } from 'util/mount';
 import { test, cleanup, init, setSuccess } from 'util/test';
 import { getPath } from 'util/fs';
 
-test.serial.before('init', init);
+test.serial.beforeEach('init', init);
 
-test.serial.before('creates empty container', async (t) => {
+test.serial.beforeEach('creates empty container', async (t) => {
   await mkfs(t);
 });
 
-test.serial.before('mounts properly', async (t) => {
+test.serial.beforeEach('mounts properly', async (t) => {
   await mount(t);
   t.true(await isMounted(t));
 });
 
-test.serial.after.always('unmounts properly', async (t) => {
+test.serial.afterEach.always('unmounts properly', async (t) => {
   await unmount(t);
   t.false(await isMounted(t));
 });
 
-test.serial.after('set success', setSuccess);
-test.serial.after.always('cleanup', cleanup);
+test.serial.afterEach('set success', setSuccess);
+test.serial.afterEach.always('cleanup', cleanup);
 
 test.serial.todo('allows to open a maximum of 64 files');
 
