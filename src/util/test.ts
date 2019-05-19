@@ -1,6 +1,9 @@
 import ava, { ExecutionContext as GenericExecutionContext, TestInterface } from 'ava';
 import { TMP_DIR, TMP_BASE_PREFIX } from 'util/tmp';
 
+import { mount, unmount, isMounted } from 'util/mount';
+import { mkfs } from 'util/mkfs';
+
 export interface CleanupCb {
   (): void;
 }
@@ -22,18 +25,45 @@ export interface FileInfo {
 
 export type TypedExecutionContext = GenericExecutionContext<Context>;
 
-export const test = ava as TestInterface<Context>;
+const test = ava as TestInterface<Context>;
 
-export function init(t: TypedExecutionContext) {
+export function initializeTest(initFiles?: FileInfo[]) {
+  test.serial.beforeEach('init', init);
+
+  const createContainerTitle = initFiles
+    ? `creates container with ${initFiles.length} files`
+    : 'creates empty container';
+
+  test.serial.beforeEach(createContainerTitle, async (t) => {
+    await mkfs(t, initFiles);
+  });
+
+  test.serial.beforeEach('mounts', async (t) => {
+    await mount(t);
+    t.true(await isMounted(t));
+  });
+
+  test.serial.afterEach.always('unmounts', async (t) => {
+    await unmount(t);
+    t.false(await isMounted(t));
+  });
+
+  test.serial.afterEach('set success', setSuccess);
+  test.serial.afterEach.always('cleanup', cleanup);
+
+  return test;
+}
+
+function init(t: TypedExecutionContext) {
   t.context.initFiles = [];
   t.context.cleanupCbs = [];
 }
 
-export function setSuccess(t: TypedExecutionContext) {
+function setSuccess(t: TypedExecutionContext) {
   t.context.success = true;
 }
 
-export function cleanup(t: TypedExecutionContext) {
+function cleanup(t: TypedExecutionContext) {
   let error;
 
   if (t.context.success) {
