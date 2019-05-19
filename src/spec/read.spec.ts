@@ -17,10 +17,8 @@ test('root directory has proper attributes', (t) => {
   t.is(stats.mode & fsConstants.S_IFMT, fsConstants.S_IFDIR);
   t.is(stats.mode & ~fsConstants.S_IFMT, 0o755);
   t.is(stats.nlink, 2);
-
-  // @todo is this needed?
-  t.is.skip(stats.uid, userInfo.uid);
-  t.is.skip(stats.gid, userInfo.gid);
+  t.is(stats.uid, userInfo.uid);
+  t.is(stats.gid, userInfo.gid);
 });
 
 test('contains no files and no directories', (t) => {
