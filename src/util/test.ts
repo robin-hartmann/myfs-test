@@ -1,21 +1,13 @@
 import ava, { ExecutionContext as GenericExecutionContext, TestInterface } from 'ava';
-import { unlinkSync } from 'fs';
-import { FileResult, DirResult, tmpNameSync, fileSync, dirSync, tmpdir } from 'tmp';
+import { TMP_DIR, TMP_BASE_PREFIX } from 'util/tmp';
 
-// @todo find better solution to patch typings
-declare module 'tmp' {
-  export const tmpdir: string;
-}
-
-type TmpResult = FileResult | DirResult;
-
-interface CleanupCb {
+export interface CleanupCb {
   (): void;
 }
 
-interface Context {
+export interface Context {
   cleanupCbs: CleanupCb[];
-  containerFile: string;
+  containerPath: string;
   initFiles: FileInfo[];
   initFilesDir: string;
   logFile: string;
@@ -28,42 +20,22 @@ export interface FileInfo {
   byteCount: number;
 }
 
-export type ExecutionContext = GenericExecutionContext<Context>;
+export type TypedExecutionContext = GenericExecutionContext<Context>;
 
 export const test = ava as TestInterface<Context>;
 
-const TMP_PREFIX = 'myfs';
-
-export function getTmpName(t: ExecutionContext, purpose: string, extension?: string) {
-  const name = tmpNameSync({ prefix: getTmpPrefix(purpose), postfix: extension });
-  addToCleanup(t, name);
-  return name;
-}
-
-export function getTmpFile(t: ExecutionContext, purpose: string, extension?: string) {
-  const file = fileSync({ prefix: getTmpPrefix(purpose), postfix: extension, keep: true });
-  addToCleanup(t, file);
-  return file;
-}
-
-export function getTmpDir(t: ExecutionContext, purpose: string) {
-  const dir = dirSync({ prefix: getTmpPrefix(purpose), unsafeCleanup: true, keep: true });
-  addToCleanup(t, dir);
-  return dir;
-}
-
-export function init(t: ExecutionContext) {
+export function init(t: TypedExecutionContext) {
   t.context.initFiles = [];
   t.context.cleanupCbs = [];
 }
 
-export function setSuccess(t: ExecutionContext) {
+export function setSuccess(t: TypedExecutionContext) {
   t.context.success = true;
 }
 
-export function cleanup(t: ExecutionContext) {
+export function cleanup(t: TypedExecutionContext) {
   t.log('the following context was used:', {
-    containerFile: t.context.containerFile,
+    containerFile: t.context.containerPath,
     initFilesCount: t.context.initFiles.length,
     initFilesDir: t.context.initFilesDir,
     logFile: t.context.logFile,
@@ -75,22 +47,7 @@ export function cleanup(t: ExecutionContext) {
     t.log('created files have been cleaned up');
   } else {
     t.log("due to failure, the created files won't be cleaned up automatically");
-    t.log(`to delete all files created by myfs-test, just run "rm -rf ${tmpdir}/${TMP_PREFIX}*"`);
+    // tslint:disable-next-line: max-line-length
+    t.log(`to delete all files created by myfs-test, just run "rm -rf ${TMP_DIR}/${TMP_BASE_PREFIX}*"`);
   }
-}
-
-function getTmpPrefix(purpose: string) {
-  return `${TMP_PREFIX}-${purpose}-`;
-}
-
-function addToCleanup(t: ExecutionContext, tmpRef: TmpResult | string) {
-  let cleanupCb: CleanupCb;
-
-  if (typeof tmpRef === 'string') {
-    cleanupCb = () => unlinkSync(tmpRef);
-  } else {
-    cleanupCb = tmpRef.removeCallback;
-  }
-
-  t.context.cleanupCbs.push(cleanupCb);
 }

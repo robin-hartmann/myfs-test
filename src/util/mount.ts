@@ -1,13 +1,14 @@
 import { exec as cbBasedExec } from 'child_process';
-import { realpathSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import { promisify } from 'util';
 
-import { ExecutionContext, getTmpFile, getTmpDir } from 'util/test';
+import { TypedExecutionContext } from 'util/test';
 import { umount, isMounted as promiseBasedIsMounted } from 'util/umount/umount';
+import { createFile, createDir } from 'util/tmp';
 
 const exec = promisify(cbBasedExec);
 
-export const mount = async (t: ExecutionContext) => {
+export const mount = async (t: TypedExecutionContext) => {
   const BIN_MOUNT = process.env.MYFS_BIN_MOUNT;
 
   if (!(BIN_MOUNT && existsSync(BIN_MOUNT))) {
@@ -15,28 +16,22 @@ export const mount = async (t: ExecutionContext) => {
     throw new Error("The location of the 'mount' executable wasn't specified or the specified file didn't exists. Please set the environment variable 'MYFS_BIN_MOUNT' to the location of the 'mount' executable.");
   }
 
-  const logFile = getTmpFile(t, 'log', '.log');
-  const mountDir = getTmpDir(t, 'mount');
-
-  t.context.logFile = logFile.name;
-  // required, because /tmp is just a link to /private/tmp
-  // and umount doesn't seem to work when used on links
-  // @todo find a better solution
-  t.context.mountDir = realpathSync(mountDir.name);
-
-  if (!t.context.containerFile) {
+  if (!t.context.containerPath) {
     throw new Error('Context is missing required attribute "containerFile"');
   }
 
+  t.context.logFile = createFile(t, 'log', '.log');
+  t.context.mountDir = createDir(t, 'mount');
+
   try {
     // tslint:disable-next-line: max-line-length
-    await exec(`"${BIN_MOUNT}" "${t.context.containerFile}" "${t.context.logFile}" "${t.context.mountDir}"`);
+    await exec(`"${BIN_MOUNT}" "${t.context.containerPath}" "${t.context.logFile}" "${t.context.mountDir}"`);
   } catch (e) {
     throw new Error(`Error while mounting device\n${e}`);
   }
 };
 
-export const unmount = async (t: ExecutionContext) => {
+export const unmount = async (t: TypedExecutionContext) => {
   if (!t.context.mountDir) {
     throw new Error('Context is missing required attribute "mountDir"');
   }
@@ -48,7 +43,7 @@ export const unmount = async (t: ExecutionContext) => {
   }
 };
 
-export const isMounted = async (t: ExecutionContext) => {
+export const isMounted = async (t: TypedExecutionContext) => {
   if (!t.context.mountDir) {
     throw new Error('Context is missing required attribute "mountDir"');
   }
