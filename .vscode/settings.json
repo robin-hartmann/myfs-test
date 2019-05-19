@@ -12,5 +12,7 @@
   "files.eol": "\n",
   "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
   "tslint.ignoreDefinitionFiles": false,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.quoteStyle": "single",
   "typescript.tsdk": "./node_modules/typescript/lib"
 }
