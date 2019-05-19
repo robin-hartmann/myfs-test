@@ -34,28 +34,24 @@ export function setSuccess(t: TypedExecutionContext) {
 }
 
 export function cleanup(t: TypedExecutionContext) {
-  t.log('the following context was used:', {
-    containerFile: t.context.containerPath,
-    initFilesCount: t.context.initFiles.length,
-    initFilesDir: t.context.initFilesDir,
-    logFile: t.context.logFile,
-    mountDir: t.context.mountDir,
-  });
-
   let error;
 
   if (t.context.success) {
     try {
       t.context.cleanupCbs.forEach(cleanupCb => cleanupCb());
-      t.log('created files have been cleaned up');
-
       return;
     } catch (e) {
       error = e;
     }
   }
 
-  t.log("due to failure, the created files won't be cleaned up automatically");
+  t.log("due to failure, the created files won't be cleaned up automatically:", {
+    containerFile: t.context.containerPath,
+    initFilesCount: t.context.initFiles.length,
+    initFilesDir: t.context.initFilesDir,
+    logFile: t.context.logFile,
+    mountDir: t.context.mountDir,
+  });
   // tslint:disable-next-line: max-line-length
   t.log(`to delete all files created by myfs-test, just run "rm -rf ${TMP_DIR}/${TMP_BASE_PREFIX}*"`);
 
