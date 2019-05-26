@@ -1,17 +1,16 @@
-Erzeugt über mkfs
-und dann nochmal erzeugt während mount
+* use execa to launch tests like in https://github.com/avajs/gulp-ava/blob/master/index.js
+
+- Erzeugen der Dateien über
+  - initFiles bei mkfs
+  - create bei mount
+- Unmounten und gleichen Container wieder mounten, um Persistenz zu testen
 
 Seriell
 - genau 64 Dateien öffnen
 - mehr als 64 Dateien öffnen
+
 Parallel
-- Root-Verzeichnis lesen
-  - Zugriffsrechte gesetzt auf `S_IFDIR | 0555`
-  - `nlink` ist `2`
 - Metadaten lesen
-  - User und Group ID entsprechen dem aktuellen Nutzer
-  - Zugriffsrechte gesetzt auf `S_IFREG | 0444`
-  - `nlink` ist `1`
   - übrige Attribute entsprechen der Originaldatei
 - Inhalt komplett lesen
   - entspricht der Originaldatei
@@ -20,26 +19,16 @@ Parallel
 - Inhalt mehrfach lesen (und an verschiedenen Stellen)
 
 Parallel
-- Dateien umbenennen
-  - ungültiger Dateiname
-    - `.` oder `..`
-  - Pfad existiert nicht
-- Dateien löschen
-  - Dateiname existiert nicht
-  - mehrfach löschen und wieder anlegen
-
-Parallel
 - Dateien anlegen
   - ungültiger Dateiname
     - `.` oder `..`
   - Dateiname existiert bereits
   - Größe überschreitet verfügbaren Speicherplatz
+- Dateien löschen
+  - Dateiname existiert nicht
+  - mehrfach löschen und wieder anlegen
 - Verzeichnis anlegen
   - muss Fehler `EACCES` verursachen
-
-- Unmounten und gleichen Container wieder mounten, um Persistenz zu testen
-
-
 
 - `mkfs.myfs`
   - CLI
