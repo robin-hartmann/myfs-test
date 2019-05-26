@@ -25,7 +25,9 @@
     "typescript": "3.3.3333"
   },
   "dependencies": {
+    "@types/execa": "0.9.0",
     "ava": "1.2.1",
+    "execa": "1.0.0",
     "pkg-dir": "3.0.0",
     "tmp": "0.1.0",
     "tsconfig-paths": "3.8.0",

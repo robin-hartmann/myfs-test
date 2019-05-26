@@ -13,7 +13,9 @@ export interface Context {
   containerPath: string;
   initFiles: FileInfo[];
   initFilesDir: string;
-  logFile: string;
+  mkfsOutLogFile: string;
+  mkfsErrLogFile: string;
+  mountLogFile: string;
   mountDir: string;
   success: boolean;
 }
@@ -68,13 +70,15 @@ function init(t: TypedExecutionContext, initFiles: FileInfo[] = []) {
 
   // required for mkfs
   t.context.containerPath = getName(t, 'container', '.bin');
+  t.context.mkfsOutLogFile = createFile(t, 'mkfs-out-log', '.log');
+  t.context.mkfsErrLogFile = createFile(t, 'mkfs-err-log', '.log');
 
   if (t.context.initFiles.length) {
     t.context.initFilesDir = createDir(t, 'init-files');
   }
 
   // required for mount
-  t.context.logFile = createFile(t, 'log', '.log');
+  t.context.mountLogFile = createFile(t, 'mount-log', '.log');
   t.context.mountDir = createDir(t, 'mount');
 }
 
@@ -98,7 +102,9 @@ function cleanup(t: TypedExecutionContext) {
     containerFile: t.context.containerPath,
     initFilesCount: t.context.initFiles.length,
     initFilesDir: t.context.initFilesDir,
-    logFile: t.context.logFile,
+    mkfsOutLogFile: t.context.mkfsOutLogFile,
+    mkfsErrLogFile: t.context.mkfsErrLogFile,
+    mountLogFile: t.context.mountLogFile,
     mountDir: t.context.mountDir,
   });
   // tslint:disable-next-line: max-line-length

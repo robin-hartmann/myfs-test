@@ -1,11 +1,8 @@
-import { exec as cbBasedExec } from 'child_process';
 import { existsSync } from 'fs';
-import { promisify } from 'util';
+import * as execa from 'execa';
 
 import { TypedExecutionContext } from 'util/test';
 import { umount, isMounted as promiseBasedIsMounted } from 'util/umount/umount';
-
-const exec = promisify(cbBasedExec);
 
 export const mount = async (t: TypedExecutionContext) => {
   const BIN_MOUNT = process.env.MYFS_BIN_MOUNT;
@@ -21,7 +18,7 @@ export const mount = async (t: TypedExecutionContext) => {
 
   try {
     // tslint:disable-next-line: max-line-length
-    await exec(`"${BIN_MOUNT}" "${t.context.containerPath}" "${t.context.logFile}" "${t.context.mountDir}"`);
+    await execa(BIN_MOUNT, [t.context.containerPath, t.context.mountLogFile, t.context.mountDir]);
   } catch (e) {
     throw new Error(`Error while mounting device\n${e}`);
   }

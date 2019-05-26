@@ -1,20 +1,15 @@
-import { exec as cbBasedExec } from 'child_process';
-import { promisify } from 'util';
+import * as execa from 'execa';
 
-import { IUmount, IsMountedResult } from './interface';
-
-const exec = promisify(cbBasedExec);
+import { IUmount } from './interface';
 
 async function umount(device: string) {
-  return exec(`fusermount -u "${device}"`).then(() => { });
+  return execa('fusermount', ['-u', device])
+    .then(() => { });
 }
 
 async function isMounted(device: string) {
-  return new Promise<IsMountedResult>((resolve, reject) => {
-    cbBasedExec(`findmnt ${device}`)
-      .on('error', reject)
-      .on('exit', code => resolve(code === 0));
-  });
+  return execa('findmnt', [device])
+    .then(result => result.code === 0);
 }
 
 const api: IUmount = {
