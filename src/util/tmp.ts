@@ -51,7 +51,7 @@ function addToCleanup(t: TypedExecutionContext, tmpRef: TmpRef) {
   t.context.cleanupCbs.push(cleanupCb);
 }
 
-// required, because /tmp is just a link to /private/tmp
+// required, because on macOS /tmp is just a link to /private/tmp
 // and umount doesn't seem to work when used on links
 // @todo find a better solution
 function resolvePath(path: string) {
