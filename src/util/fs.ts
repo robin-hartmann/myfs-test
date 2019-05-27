@@ -25,15 +25,10 @@ export function validateRootAttrs(t: TypedExecutionContext) {
 export function validateAllFileAttrs(t: TypedExecutionContext) {
   const userInfo = getUserInfo();
   const files = readdirSync(t.context.mountDir)
-    .map(entryName => ({
-      entryName,
-      stats: statSync(getPath(t, entryName)),
-    }))
-    .filter(entryInfo => entryInfo.stats.isFile());
+    .map(entryName => statSync(getPath(t, entryName)))
+    .filter(stats => stats.isFile());
 
-  files.forEach((fileInfo) => {
-    const stats = fileInfo.stats;
-
+  files.forEach((stats) => {
     t.is(stats.uid, userInfo.uid);
     t.is(stats.gid, userInfo.gid);
     t.is(stats.mode & fsConstants.S_IFMT, fsConstants.S_IFREG);
