@@ -1,6 +1,6 @@
 import * as execa from 'execa';
 
-import { IUmount } from './interface';
+import { IUmount, IsMountedResult } from './interface';
 
 async function umount(device: string) {
   return execa('fusermount', ['-u', device])
@@ -8,8 +8,11 @@ async function umount(device: string) {
 }
 
 async function isMounted(device: string) {
-  return execa('findmnt', [device])
-    .then(result => result.code === 0);
+  return new Promise<IsMountedResult>((resolve, reject) => {
+    execa('findmnt', [device])
+      .on('error', reject)
+      .on('exit', code => resolve(code === 0));
+  });
 }
 
 const api: IUmount = {
