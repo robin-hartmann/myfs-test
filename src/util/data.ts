@@ -1,6 +1,7 @@
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { sync as getPkgRoot } from 'pkg-dir';
+import * as assert from 'assert';
 
 const LOREM_IPSUM_NAME = 'lorem-ipsum-1000.txt';
 const PKG_ROOT = getPkgRoot(__dirname) as string;
@@ -20,9 +21,7 @@ export const generateData = (byteCount: number) => {
     );
   }
 
-  if (remainingBytes) {
-    throw new Error('remainingBytes must be 0');
-  }
+  assert(!remainingBytes, 'remainingBytes must be 0');
 
   return data;
 };
