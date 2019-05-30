@@ -6,7 +6,7 @@
     "moduleResolution": "node",
     "target": "es5",
     "lib": [
-      "es2015"
+      "es2017"
     ],
     "rootDir": ".",
     "outDir": "./transpiled",
