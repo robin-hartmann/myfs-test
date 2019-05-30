@@ -2,7 +2,7 @@ import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { sync as getPkgRoot } from 'pkg-dir';
 
-const LOREM_IPSUM_NAME = 'lorem-ipsum-1024.txt';
+const LOREM_IPSUM_NAME = 'lorem-ipsum-1000.txt';
 const PKG_ROOT = getPkgRoot(__dirname) as string;
 const PKG_RES = resolve(PKG_ROOT, 'res');
 const LOREM_IPSUM = readFileSync(resolve(PKG_RES, LOREM_IPSUM_NAME));
