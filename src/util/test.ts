@@ -98,7 +98,7 @@ function cleanup(t: TypedExecutionContext) {
     }
   }
 
-  t.log("due to failure, the created files won't be cleaned up automatically:", {
+  const context = {
     containerFile: t.context.containerPath,
     initFilesCount: t.context.initFiles.length,
     initFilesDir: t.context.initFilesDir,
@@ -106,7 +106,13 @@ function cleanup(t: TypedExecutionContext) {
     mkfsErrLogFile: t.context.mkfsErrLogFile,
     mountLogFile: t.context.mountLogFile,
     mountDir: t.context.mountDir,
-  });
+  };
+
+  (Object.keys(context) as (keyof typeof context)[])
+    .filter(key => !context[key])
+    .forEach(key => delete context[key]);
+
+  t.log("due to failure, the created files won't be cleaned up automatically:", context);
   // tslint:disable-next-line: max-line-length
   t.log(`to delete all files created by myfs-test, just run "rm -rf ${TMP_DIR}/${TMP_BASE_PREFIX}*"`);
 
