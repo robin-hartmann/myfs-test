@@ -3,7 +3,6 @@
 - Erzeugen der Dateien über
   - initFiles bei mkfs
   - create bei mount
-- Unmounten und gleichen Container wieder mounten, um Persistenz zu testen
 
 Seriell
 - genau 64 Dateien öffnen
@@ -16,7 +15,10 @@ Parallel
   - entspricht der Originaldatei
 - Inhalt an bestimmter Stelle lesen
   - entspricht der Originaldatei
-- Inhalt mehrfach lesen (und an verschiedenen Stellen)
+- Inhalt mehrfach lesen
+  - verschiedenen Stellen
+  - zwischen verschiedenen Dateien wechseln
+- Bereits geschriebene Dateien mit `truncate` abschneiden
 
 Parallel
 - Dateien anlegen
