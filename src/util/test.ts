@@ -112,7 +112,7 @@ function cleanup(t: TypedExecutionContext) {
     .filter(key => !context[key])
     .forEach(key => delete context[key]);
 
-  t.log("due to failure, the created files won't be cleaned up automatically:", context);
+  t.log("due to failure, created files won't be cleaned up automatically", context);
   // tslint:disable-next-line: max-line-length
   t.log(`to delete all files created by myfs-test, just run "rm -rf ${TMP_DIR}/${TMP_BASE_PREFIX}*"`);
 
