@@ -1,7 +1,7 @@
 // base for debug and proper config
 const configBase = {
   cache: true,
-  failFast: false,
+  failFast: true,
   verbose: true,
   require: [
     './scripts/tsconfig-paths-bootstrap',
