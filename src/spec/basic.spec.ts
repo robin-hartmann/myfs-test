@@ -31,12 +31,10 @@ test.serial('can create file with content', (t) => {
   t.is(readFileSync(path).toString(), content1);
 });
 
-test.serial('can overwritte files', (t) => {
+test.serial('can overwrite files', (t) => {
   const path1 = getPath(t, fileName1);
   const path2 = getPath(t, fileName2);
 
-  t.true(existsSync(path1));
-  t.true(existsSync(path2));
   writeFileSync(path1, content1);
   writeFileSync(path2, content2);
   t.is(readFileSync(path1).toString(), content1);
@@ -46,7 +44,6 @@ test.serial('can overwritte files', (t) => {
 test.serial('can append to file', (t) => {
   const path = getPath(t, fileName1);
 
-  t.true(existsSync(path));
   appendFileSync(path, content2);
   t.is(readFileSync(path).toString(), content1 + content2);
 });
