@@ -6,11 +6,18 @@ import {
 } from 'fs';
 
 import { TypedExecutionContext } from 'util/test';
+import { unmount, isMounted, mount } from 'util/mount';
 
 export function getPath(t: TypedExecutionContext, entryName: string) {
   return resolve(t.context.mountDir, entryName);
 }
 
+export async function remount(t: TypedExecutionContext) {
+  await unmount(t);
+  t.false(await isMounted(t));
+  await mount(t);
+  t.true(await isMounted(t));
+}
 export function validateRootAttrs(t: TypedExecutionContext) {
   const stats = statSync(getPath(t, '.'));
   const userInfo = getUserInfo();

@@ -9,8 +9,7 @@ import {
 } from 'fs';
 
 import { initializeTest } from 'util/test';
-import { getPath, validateAllFileAttrs } from 'util/fs';
-import { unmount, isMounted, mount } from 'util/mount';
+import { getPath, validateAllFileAttrs, remount } from 'util/fs';
 
 const test = initializeTest(true);
 const fileName1 = 'neuedatei1.txt';
@@ -62,10 +61,7 @@ test.serial('can delete file', (t) => {
 });
 
 test.serial('changes are persisted', async (t) => {
-  await unmount(t);
-  t.false(await isMounted(t));
-  await mount(t);
-  t.true(await isMounted(t));
+  await remount(t);
 
   const path1 = getPath(t, fileName1);
   const path2 = getPath(t, fileName2);
