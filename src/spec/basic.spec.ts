@@ -21,18 +21,14 @@ const content2 = 'Hello World 2';
 test.serial('can create file without content', (t) => {
   const path = getPath(t, fileName1);
 
-  t.false(existsSync(path));
   closeSync(openSync(path, 'w'));
-  t.true(existsSync(path));
   t.is(readFileSync(path).toString(), '');
 });
 
 test.serial('can create file with content', (t) => {
   const path = getPath(t, fileName2);
 
-  t.false(existsSync(path));
   writeFileSync(path, content1);
-  t.true(existsSync(path));
   t.is(readFileSync(path).toString(), content1);
 });
 
@@ -61,7 +57,6 @@ test.serial('all files have proper attributes', validateAllFileAttrs);
 test.serial('can delete file', (t) => {
   const path = getPath(t, fileName1);
 
-  t.true(existsSync(path));
   unlinkSync(path);
   t.false(existsSync(path));
 });
@@ -76,7 +71,6 @@ test.serial('changes are persisted', async (t) => {
   const path2 = getPath(t, fileName2);
 
   t.false(existsSync(path1));
-  t.true(existsSync(path2));
   t.is(readFileSync(path2).toString(), content2);
 
   validateAllFileAttrs(t);
