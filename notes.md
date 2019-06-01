@@ -1,3 +1,4 @@
+* run clean up per context and only keep data if specifically that test fails
 * use execa to launch tests like in https://github.com/avajs/gulp-ava/blob/master/index.js
 
 - Erzeugen der Dateien über
