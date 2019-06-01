@@ -15,11 +15,12 @@ export function validateRootAttrs(t: TypedExecutionContext) {
   const stats = statSync(getPath(t, '.'));
   const userInfo = getUserInfo();
 
+  t.true(stats.isDirectory());
   t.is(stats.mode & fsConstants.S_IFMT, fsConstants.S_IFDIR);
   t.is(stats.mode & ~fsConstants.S_IFMT, 0o755);
-  t.is(stats.nlink, 2);
   t.is(stats.uid, userInfo.uid);
   t.is(stats.gid, userInfo.gid);
+  t.is(stats.nlink, 2);
 }
 
 export function validateAllFileAttrs(t: TypedExecutionContext) {
@@ -29,11 +30,11 @@ export function validateAllFileAttrs(t: TypedExecutionContext) {
     .filter(stats => stats.isFile());
 
   files.forEach((stats) => {
-    t.is(stats.uid, userInfo.uid);
-    t.is(stats.gid, userInfo.gid);
     t.is(stats.mode & fsConstants.S_IFMT, fsConstants.S_IFREG);
     t.is(stats.mode & ~fsConstants.S_IFMT, 0o644);
+    t.is(stats.uid, userInfo.uid);
+    t.is(stats.gid, userInfo.gid);
     t.is(stats.nlink, 1);
-    // @todo check other attributes and content
+    // @todo check other attributes
   });
 }
