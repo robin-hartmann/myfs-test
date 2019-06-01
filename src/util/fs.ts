@@ -18,6 +18,12 @@ export async function remount(t: TypedExecutionContext) {
   await mount(t);
   t.true(await isMounted(t));
 }
+
+export function testEquality(t: TypedExecutionContext, a: Buffer, b: Buffer, message?: string) {
+  t.is(a.length, b.length, message);
+  t.is(a.toString(), b.toString(), message);
+}
+
 export function validateRootAttrs(t: TypedExecutionContext) {
   const stats = statSync(getPath(t, '.'));
   const userInfo = getUserInfo();
