@@ -60,6 +60,7 @@ test.serial('can delete file', (t) => {
 test.serial('changes are persisted', async (t) => {
   await remount(t);
 
+  // @todo use readdir
   const path1 = getPath(t, fileName1);
   const path2 = getPath(t, fileName2);
 
