@@ -1,6 +1,11 @@
-import ava, { ExecutionContext as GenericExecutionContext, TestInterface } from 'ava';
-import { TMP_DIR, TMP_BASE_PREFIX, createFile, createDir, getName } from 'util/tmp';
+import ava, {
+  ExecutionContext as GenericExecutionContext,
+  TestInterface,
+  BeforeInterface,
+  AfterInterface,
+} from 'ava';
 
+import { TMP_DIR, TMP_BASE_PREFIX, createFile, createDir, getName } from 'util/tmp';
 import { mount, unmount, isMounted } from 'util/mount';
 import { mkfs } from 'util/mkfs';
 
@@ -30,13 +35,16 @@ export type TypedExecutionContext = GenericExecutionContext<Context>;
 const test = ava as TestInterface<Context>;
 
 export function initializeTest(sharedContext: boolean = false, initFiles?: FileInfo[]) {
-  const before = sharedContext
-    ? test.serial.before
-    : test.serial.beforeEach;
+  let before: BeforeInterface<Context>;
+  let after: AfterInterface<Context>;
 
-  const after = sharedContext
-    ? test.serial.after
-    : test.serial.afterEach;
+  if (sharedContext) {
+    before = test.serial.before;
+    after = test.serial.after;
+  } else {
+    before = test.serial.beforeEach;
+    after = test.serial.afterEach;
+  }
 
   before('init', t => init(t, initFiles));
 
