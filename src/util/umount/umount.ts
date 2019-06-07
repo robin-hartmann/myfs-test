@@ -1,10 +1,12 @@
 import { platform } from 'os';
 
-import { IUmount } from './interface';
 import * as umountLinux from './umount-linux';
 import * as umountMacOS from './umount-macos';
 
-let umount: IUmount;
+let umount: {
+  umount(device: string): Promise<void>;
+  isMounted(device: string): Promise<boolean>;
+};
 
 switch (platform()) {
   case 'darwin':
