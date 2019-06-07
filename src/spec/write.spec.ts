@@ -1,43 +1,19 @@
-import { openSync, writeSync, readFileSync, closeSync } from 'fs';
-
-import { initializeTest, TypedExecutionContext } from 'util/test';
-import { generateData } from 'util/data';
-import { resolve, testEquality, remount } from 'util/fs';
+import { initializeTest } from 'util/test';
+import {
+  simpleWrite as genericSimpleWrite,
+  fragmentedWrite as genericFragmentedWrite,
+  FragmentedByteCount,
+} from 'util/fs';
 
 const test = initializeTest();
 const blockSize = 512;
 const fileName = 'lorem-ipsum.txt';
+const shouldRemount = true;
 
-function simpleWrite(byteCount: number) {
-  return fragmentedWrite([{ byteCount, gapLength: 0 }]);
-}
-
-function fragmentedWrite(fragmentedByteCounts: { gapLength: number, byteCount: number }[]) {
-  return async function (t: TypedExecutionContext) {
-    const path = resolve(t, fileName);
-    // open file for reading and writing
-    // the file is created (if it does not exist) or it fails (if it exists)
-    const fd = openSync(path, 'wx+');
-    let entireData = Buffer.from('');
-    let lastFragmentEnd = 0;
-
-    for (const fragment of fragmentedByteCounts) {
-      const data = generateData(fragment.byteCount);
-      const zeroes = Buffer.alloc(fragment.gapLength);
-      const position = lastFragmentEnd + fragment.gapLength;
-
-      lastFragmentEnd = position + data.length;
-      entireData = Buffer.concat([entireData, zeroes, data]);
-      writeSync(fd, data, 0, data.length, position);
-    }
-
-    testEquality(t, readFileSync(fd), entireData, 'before remount');
-    closeSync(fd);
-
-    await remount(t);
-    testEquality(t, readFileSync(path), entireData, 'after remount');
-  };
-}
+const simpleWrite = (byteCount: number) =>
+  genericSimpleWrite(fileName, byteCount, shouldRemount);
+const fragmentedWrite = (fragmentedByteCounts: FragmentedByteCount[]) =>
+  genericFragmentedWrite(fileName, fragmentedByteCounts, shouldRemount);
 
 test('entire first block', simpleWrite(blockSize));
 test('entire first block - 1', simpleWrite(blockSize - 1));

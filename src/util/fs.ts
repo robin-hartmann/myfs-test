@@ -3,10 +3,20 @@ import { userInfo as getUserInfo } from 'os';
 import {
   readdirSync, statSync,
   constants as fsConstants,
+  openSync,
+  writeSync,
+  readFileSync,
+  closeSync,
 } from 'fs';
 
 import { TypedExecutionContext } from 'util/test';
 import { unmount, isMounted, mount } from 'util/mount';
+import { generateData } from 'util/data';
+
+export interface FragmentedByteCount {
+  gapLength: number;
+  byteCount: number;
+}
 
 export function resolve(t: TypedExecutionContext, entryName: string = '.') {
   return pathResolve(t.context.mountDir, entryName);
@@ -27,6 +37,45 @@ export async function remount(t: TypedExecutionContext) {
 export function testEquality(t: TypedExecutionContext, a: Buffer, b: Buffer, message?: string) {
   t.is(a.length, b.length, message);
   t.is(a.toString(), b.toString(), message);
+}
+
+export function simpleWrite(fileName: string, byteCount: number, shouldRemount: boolean = false) {
+  return fragmentedWrite(fileName, [{ byteCount, gapLength: 0 }], shouldRemount);
+}
+
+export function fragmentedWrite(
+  fileName: string,
+  fragmentedByteCounts: FragmentedByteCount[],
+  shouldRemount: boolean = false,
+) {
+  return async function (t: TypedExecutionContext) {
+    const path = resolve(t, fileName);
+    // open file for reading and writing
+    // the file is created (if it does not exist) or it fails (if it exists)
+    const fd = openSync(path, 'wx+');
+    let entireData = Buffer.from('');
+    let lastFragmentEnd = 0;
+
+    for (const fragment of fragmentedByteCounts) {
+      const data = generateData(fragment.byteCount);
+      const zeroes = Buffer.alloc(fragment.gapLength);
+      const position = lastFragmentEnd + fragment.gapLength;
+
+      lastFragmentEnd = position + data.length;
+      entireData = Buffer.concat([entireData, zeroes, data]);
+      writeSync(fd, data, 0, data.length, position);
+    }
+
+    testEquality(t, readFileSync(fd), entireData, 'before remount');
+    closeSync(fd);
+
+    if (!shouldRemount) {
+      return;
+    }
+
+    await remount(t);
+    testEquality(t, readFileSync(path), entireData, 'after remount');
+  };
 }
 
 export function validateRootAttrs(t: TypedExecutionContext) {
