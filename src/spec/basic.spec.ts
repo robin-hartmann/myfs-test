@@ -9,7 +9,7 @@ import {
 } from 'fs';
 
 import { initializeTest } from 'util/test';
-import { resolve, validateAllFileAttrs, remount } from 'util/fs';
+import { resolve, validateFilesAttrs, remount } from 'util/fs';
 
 const test = initializeTest(true);
 const fileName1 = 'neuedatei1.txt';
@@ -48,7 +48,7 @@ test.serial('can append to file', (t) => {
   t.is(readFileSync(path).toString(), content1 + content2);
 });
 
-test.serial('all files have proper attributes', validateAllFileAttrs);
+test.serial('all files have proper attributes', t => validateFilesAttrs(t, 2));
 
 test.serial('can delete file', (t) => {
   const path = resolve(t, fileName1);
@@ -60,12 +60,8 @@ test.serial('can delete file', (t) => {
 test.serial('changes are persisted', async (t) => {
   await remount(t);
 
-  // @todo use readdir
-  const path1 = resolve(t, fileName1);
   const path2 = resolve(t, fileName2);
 
-  t.false(existsSync(path1));
+  validateFilesAttrs(t, 1);
   t.is(readFileSync(path2).toString(), content2);
-
-  validateAllFileAttrs(t);
 });

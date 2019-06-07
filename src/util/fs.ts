@@ -18,6 +18,13 @@ export interface FragmentedByteCount {
   byteCount: number;
 }
 
+export async function remount(t: TypedExecutionContext) {
+  await unmount(t);
+  t.false(await isMounted(t));
+  await mount(t);
+  t.true(await isMounted(t));
+}
+
 export function resolve(t: TypedExecutionContext, entryName: string = '.') {
   return pathResolve(t.context.mountDir, entryName);
 }
@@ -27,14 +34,18 @@ export function getEntriesStats(t: TypedExecutionContext) {
     .map(entryName => statSync(resolve(t, entryName)));
 }
 
-export async function remount(t: TypedExecutionContext) {
-  await unmount(t);
-  t.false(await isMounted(t));
-  await mount(t);
-  t.true(await isMounted(t));
+export function getFiles(t: TypedExecutionContext, expectedFileCount?: number) {
+  const files = getEntriesStats(t)
+    .filter(stats => stats.isFile());
+
+  if (expectedFileCount !== undefined) {
+    t.is(files.length, expectedFileCount);
+  }
+
+  return files;
 }
 
-export function testEquality(t: TypedExecutionContext, a: Buffer, b: Buffer, message?: string) {
+export function isEqual(t: TypedExecutionContext, a: Buffer, b: Buffer, message?: string) {
   t.is(a.length, b.length, message);
   t.is(a.toString(), b.toString(), message);
 }
@@ -66,7 +77,7 @@ export function fragmentedWrite(
       writeSync(fd, data, 0, data.length, position);
     }
 
-    testEquality(t, readFileSync(fd), entireData, 'before remount');
+    isEqual(t, readFileSync(fd), entireData, 'before remount');
     closeSync(fd);
 
     if (!shouldRemount) {
@@ -74,7 +85,7 @@ export function fragmentedWrite(
     }
 
     await remount(t);
-    testEquality(t, readFileSync(path), entireData, 'after remount');
+    isEqual(t, readFileSync(path), entireData, 'after remount');
   };
 }
 
@@ -90,10 +101,9 @@ export function validateRootAttrs(t: TypedExecutionContext) {
   t.is(stats.nlink, 2);
 }
 
-export function validateAllFileAttrs(t: TypedExecutionContext) {
+export function validateFilesAttrs(t: TypedExecutionContext, expectedFileCount?: number) {
   const userInfo = getUserInfo();
-  const files = getEntriesStats(t)
-    .filter(stats => stats.isFile());
+  const files = getFiles(t, expectedFileCount);
 
   files.forEach((stats) => {
     t.is(stats.mode & fsConstants.S_IFMT, fsConstants.S_IFREG);
