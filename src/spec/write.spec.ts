@@ -2,7 +2,7 @@ import { openSync, writeSync, readFileSync, closeSync } from 'fs';
 
 import { initializeTest, TypedExecutionContext } from 'util/test';
 import { generateData } from 'util/data';
-import { getPath, testEquality, remount } from 'util/fs';
+import { resolve, testEquality, remount } from 'util/fs';
 
 const test = initializeTest();
 const blockSize = 512;
@@ -14,7 +14,7 @@ function simpleWrite(byteCount: number) {
 
 function fragmentedWrite(fragmentedByteCounts: { gapLength: number, byteCount: number }[]) {
   return async function (t: TypedExecutionContext) {
-    const path = getPath(t, fileName);
+    const path = resolve(t, fileName);
     // open file for reading and writing
     // the file is created (if it does not exist) or it fails (if it exists)
     const fd = openSync(path, 'wx+');

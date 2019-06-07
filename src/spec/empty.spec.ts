@@ -1,9 +1,6 @@
-import {
-  readdirSync, statSync,
-} from 'fs';
-
 import { initializeTest } from 'util/test';
-import { getPath, validateRootAttrs } from 'util/fs';
+import { validateRootAttrs, resolve } from 'util/fs';
+import { readdirSync } from 'fs';
 
 const test = initializeTest();
 
@@ -12,12 +9,8 @@ const test = initializeTest();
 
 test('root directory has proper attributes', validateRootAttrs);
 
-test('contains no files and no directories', (t) => {
-  const statsArray = readdirSync(t.context.mountDir)
-    .map(entryName => statSync(getPath(t, entryName)));
-  const dirCount = statsArray.filter(stats => stats.isDirectory()).length;
-  const fileCount = statsArray.filter(stats => stats.isFile()).length;
+test('contains nothing', (t) => {
+  const entries = readdirSync(resolve(t));
 
-  t.is(dirCount, 0);
-  t.is(fileCount, 0);
+  t.is(entries.length, 0);
 });

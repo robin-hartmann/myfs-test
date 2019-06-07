@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve as pathResolve } from 'path';
 import { userInfo as getUserInfo } from 'os';
 import {
   readdirSync, statSync,
@@ -8,8 +8,13 @@ import {
 import { TypedExecutionContext } from 'util/test';
 import { unmount, isMounted, mount } from 'util/mount';
 
-export function getPath(t: TypedExecutionContext, entryName: string) {
-  return resolve(t.context.mountDir, entryName);
+export function resolve(t: TypedExecutionContext, entryName: string = '.') {
+  return pathResolve(t.context.mountDir, entryName);
+}
+
+export function getEntriesStats(t: TypedExecutionContext) {
+  return readdirSync(t.context.mountDir)
+    .map(entryName => statSync(resolve(t, entryName)));
 }
 
 export async function remount(t: TypedExecutionContext) {
@@ -25,7 +30,7 @@ export function testEquality(t: TypedExecutionContext, a: Buffer, b: Buffer, mes
 }
 
 export function validateRootAttrs(t: TypedExecutionContext) {
-  const stats = statSync(getPath(t, '.'));
+  const stats = statSync(resolve(t));
   const userInfo = getUserInfo();
 
   t.true(stats.isDirectory());
@@ -38,8 +43,7 @@ export function validateRootAttrs(t: TypedExecutionContext) {
 
 export function validateAllFileAttrs(t: TypedExecutionContext) {
   const userInfo = getUserInfo();
-  const files = readdirSync(t.context.mountDir)
-    .map(entryName => statSync(getPath(t, entryName)))
+  const files = getEntriesStats(t)
     .filter(stats => stats.isFile());
 
   files.forEach((stats) => {
