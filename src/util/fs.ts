@@ -7,15 +7,26 @@ import {
   writeSync,
   readFileSync,
   closeSync,
+  Stats,
 } from 'fs';
 
 import { TypedExecutionContext } from 'util/test';
 import { unmount, isMounted, mount } from 'util/mount';
 import { generateData } from 'util/data';
 
+export interface Times {
+  atimeMs: number;
+  ctimeMs: number;
+  mtimeMs: number;
+}
+
 export interface FragmentedByteCount {
   gapLength: number;
   byteCount: number;
+}
+
+function isSameOrShortlyAfter(expected: number, actual: number) {
+  return actual >= expected && actual <= expected + 1000;
 }
 
 export async function remount(t: TypedExecutionContext) {
@@ -89,6 +100,44 @@ export function fragmentedWrite(
   };
 }
 
+export function validateTimes(t: TypedExecutionContext, stats: Stats, expectedTimes?: Times) {
+  if (!expectedTimes) {
+    return;
+  }
+
+  const acEqual = expectedTimes.atimeMs === expectedTimes.ctimeMs;
+  const amEqual = expectedTimes.atimeMs === expectedTimes.mtimeMs;
+  const cmEqual = expectedTimes.ctimeMs === expectedTimes.mtimeMs;
+
+  if (acEqual && amEqual) {
+    t.is(stats.atimeMs, stats.ctimeMs);
+    t.is(stats.atimeMs, stats.mtimeMs);
+    t.true(isSameOrShortlyAfter(expectedTimes.atimeMs, stats.atimeMs));
+  } else if (acEqual) {
+    t.is(stats.atimeMs, stats.ctimeMs);
+    t.not(stats.atimeMs, stats.mtimeMs);
+    t.true(isSameOrShortlyAfter(expectedTimes.atimeMs, stats.atimeMs));
+    t.true(isSameOrShortlyAfter(expectedTimes.mtimeMs, stats.mtimeMs));
+  } else if (amEqual) {
+    t.not(stats.atimeMs, stats.ctimeMs);
+    t.is(stats.atimeMs, stats.mtimeMs);
+    t.true(isSameOrShortlyAfter(expectedTimes.atimeMs, stats.atimeMs));
+    t.true(isSameOrShortlyAfter(expectedTimes.ctimeMs, stats.ctimeMs));
+  } else if (cmEqual) {
+    t.not(stats.atimeMs, stats.ctimeMs);
+    t.is(stats.ctimeMs, stats.mtimeMs);
+    t.true(isSameOrShortlyAfter(expectedTimes.atimeMs, stats.atimeMs));
+    t.true(isSameOrShortlyAfter(expectedTimes.ctimeMs, stats.ctimeMs));
+  } else {
+    t.not(stats.atimeMs, stats.ctimeMs);
+    t.not(stats.atimeMs, stats.mtimeMs);
+    t.not(stats.ctimeMs, stats.mtimeMs);
+    t.true(isSameOrShortlyAfter(expectedTimes.atimeMs, stats.atimeMs));
+    t.true(isSameOrShortlyAfter(expectedTimes.ctimeMs, stats.ctimeMs));
+    t.true(isSameOrShortlyAfter(expectedTimes.mtimeMs, stats.mtimeMs));
+  }
+}
+
 export function validateRootAttrs(t: TypedExecutionContext) {
   const stats = statSync(resolve(t));
   const userInfo = getUserInfo();
@@ -111,6 +160,5 @@ export function validateFilesAttrs(t: TypedExecutionContext, expectedFileCount?:
     t.is(stats.uid, userInfo.uid);
     t.is(stats.gid, userInfo.gid);
     t.is(stats.nlink, 1);
-    // @todo check other attributes
   });
 }
