@@ -27,8 +27,8 @@ test('entire first five blocks', simpleWrite(blockSize * 5));
 test('entire first five blocks - 1', simpleWrite(blockSize * 5 - 1));
 test('entire first five blocks + 1', simpleWrite(blockSize * 5 + 1));
 
-test('first block and half of second', simpleWrite(blockSize * 1.5));
-test('first block and half of fifth', simpleWrite(blockSize * 4.5));
+test('first block to half of second', simpleWrite(blockSize * 1.5));
+test('first block to half of fifth', simpleWrite(blockSize * 4.5));
 
 test('only second block', fragmentedWrite([{
   gapLength: blockSize,
