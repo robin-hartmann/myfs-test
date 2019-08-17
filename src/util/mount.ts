@@ -18,7 +18,7 @@ export const mount = async (t: TypedExecutionContext) => {
 
   try {
     // tslint:disable-next-line: max-line-length
-    await execa(BIN_MOUNT, [t.context.containerPath, t.context.mountLogFile, t.context.mountDir]);
+    await execa(BIN_MOUNT, [t.context.containerPath, t.context.mountLogFile, t.context.mountDir, '-s']);
   } catch (e) {
     throw new Error(`Error while mounting device\n${e}`);
   }
