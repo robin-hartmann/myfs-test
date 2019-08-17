@@ -4,9 +4,9 @@ import {
   fragmentedWrite as genericFragmentedWrite,
   FragmentedByteCount,
 } from 'util/fs';
+import { BLOCK_SIZE } from 'util/const';
 
 const test = initializeTest();
-const blockSize = 512;
 const fileName = 'lorem-ipsum.txt';
 const shouldRemount = true;
 
@@ -15,46 +15,46 @@ const simpleWrite = (byteCount: number) =>
 const fragmentedWrite = (fragmentedByteCounts: FragmentedByteCount[]) =>
   genericFragmentedWrite(fileName, fragmentedByteCounts, shouldRemount);
 
-test('entire first block', simpleWrite(blockSize));
-test('entire first block - 1', simpleWrite(blockSize - 1));
-test('entire first block + 1', simpleWrite(blockSize + 1));
+test('entire first block', simpleWrite(BLOCK_SIZE));
+test('entire first block - 1', simpleWrite(BLOCK_SIZE - 1));
+test('entire first block + 1', simpleWrite(BLOCK_SIZE + 1));
 
-test('entire first two blocks', simpleWrite(blockSize * 2));
-test('entire first two blocks - 1', simpleWrite(blockSize * 2 - 1));
-test('entire first two blocks + 1', simpleWrite(blockSize * 2 + 1));
+test('entire first two blocks', simpleWrite(BLOCK_SIZE * 2));
+test('entire first two blocks - 1', simpleWrite(BLOCK_SIZE * 2 - 1));
+test('entire first two blocks + 1', simpleWrite(BLOCK_SIZE * 2 + 1));
 
-test('entire first five blocks', simpleWrite(blockSize * 5));
-test('entire first five blocks - 1', simpleWrite(blockSize * 5 - 1));
-test('entire first five blocks + 1', simpleWrite(blockSize * 5 + 1));
+test('entire first five blocks', simpleWrite(BLOCK_SIZE * 5));
+test('entire first five blocks - 1', simpleWrite(BLOCK_SIZE * 5 - 1));
+test('entire first five blocks + 1', simpleWrite(BLOCK_SIZE * 5 + 1));
 
-test('first block to half of second', simpleWrite(blockSize * 1.5));
-test('first block to half of fifth', simpleWrite(blockSize * 4.5));
+test('first block to half of second', simpleWrite(BLOCK_SIZE * 1.5));
+test('first block to half of fifth', simpleWrite(BLOCK_SIZE * 4.5));
 
 test('only second block', fragmentedWrite([{
-  gapLength: blockSize,
-  byteCount: blockSize,
+  gapLength: BLOCK_SIZE,
+  byteCount: BLOCK_SIZE,
 }]));
 test('only third and fifth block', fragmentedWrite([
   {
-    gapLength: blockSize * 2,
-    byteCount: blockSize,
+    gapLength: BLOCK_SIZE * 2,
+    byteCount: BLOCK_SIZE,
   },
   {
-    gapLength: blockSize,
-    byteCount: blockSize,
+    gapLength: BLOCK_SIZE,
+    byteCount: BLOCK_SIZE,
   },
 ]));
 test('only sixth and seventh block and blocks ten to twelve', fragmentedWrite([
   {
-    gapLength: blockSize * 5,
-    byteCount: blockSize * 2,
+    gapLength: BLOCK_SIZE * 5,
+    byteCount: BLOCK_SIZE * 2,
   },
   {
-    gapLength: blockSize * 2,
-    byteCount: blockSize * 3,
+    gapLength: BLOCK_SIZE * 2,
+    byteCount: BLOCK_SIZE * 3,
   },
 ]));
 test('only half of block four and five', fragmentedWrite([{
-  gapLength: blockSize * 3.5,
-  byteCount: blockSize * 2,
+  gapLength: BLOCK_SIZE * 3.5,
+  byteCount: BLOCK_SIZE * 2,
 }]));
