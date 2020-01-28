@@ -53,4 +53,4 @@ This project includes task definitions for Visual Studio Code. Just open the fol
 
 ## Authors
 
-* **Robin Hartmann** - *Initial work* - [robin-hartmann](https://github.com/robin-hartmann)
+* **Robin Hartmann** - [robin-hartmann](https://github.com/robin-hartmann)
