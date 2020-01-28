@@ -54,3 +54,7 @@ This project includes task definitions for Visual Studio Code. Just open the fol
 ## Authors
 
 * **Robin Hartmann** - [robin-hartmann](https://github.com/robin-hartmann)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
