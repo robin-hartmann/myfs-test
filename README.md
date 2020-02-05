@@ -50,6 +50,10 @@ This project includes task definitions for Visual Studio Code. Just open the fol
 
 * [AVA](https://github.com/avajs/ava) - Futuristic test runner for Node.js
 * [TypeScript](https://www.typescriptlang.org/) - Typed superset of JavaScript that compiles to plain JavaScript
+* [Tmp](https://github.com/raszi/node-tmp) - A simple temporary file and directory creator for node.js
+* [umount](https://www.npmjs.com/package/umount) - Unmount a device in UNIX
+* [execa](https://github.com/sindresorhus/execa) - Process execution for humans
+* [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of a Node.js project or npm package
 
 ## Authors
 
