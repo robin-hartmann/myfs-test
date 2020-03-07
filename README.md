@@ -46,7 +46,7 @@ This project includes task definitions for Visual Studio Code. Just open the fol
 1. Go to `src/spec` and open the `.spec` file you want to run
 1. Run the debugger (by default `F5`)
 
-## 🔧 Built With
+## 🧰 Built With
 
 * [AVA](https://github.com/avajs/ava) - Futuristic test runner for Node.js
 * [TypeScript](https://www.typescriptlang.org/) - Typed superset of JavaScript that compiles to plain JavaScript
