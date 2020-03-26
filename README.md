@@ -26,7 +26,7 @@ This project is intended to be used with Visual Studio Code and the following ex
 
 ### 🚀 Getting Started
 
-⚠️ The MyFS binaries are not built automatically before running the tests. So if the sources of MyFS have changed or haven't been built at all, make sure you run the build before running the tests. Otherwise the old binaries will be tested or the tests will fail altogether. ⚠️
+⚠️ The MyFS binaries are not built automatically before running the tests. So if the sources of MyFS have changed or haven't been built at all, make sure you run the build before running the tests. Otherwise the old binaries will be tested or the tests will fail altogether.
 
 #### Running the Tests with the Terminal
 
