@@ -24,11 +24,11 @@ This project is intended to be used with Visual Studio Code and the following ex
 * [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) - Integrates ESLint JavaScript into VS Code
 * [TSLint](https://marketplace.visualstudio.com/items?itemName=eg2.tslint) - TSLint support for Visual Studio Code
 
-## 📋 Running the Tests
+### 🚀 Getting Started
 
 ⚠️ The MyFS binaries are not built automatically before running the tests. So if the sources of MyFS have changed or haven't been built at all, make sure you run the build before running the tests. Otherwise the old binaries will be tested or the tests will fail altogether. ⚠️
 
-### With the Terminal
+#### Running the Tests with the Terminal
 
 Run the following command in the directory containing the `package.json` file:
 
@@ -36,7 +36,7 @@ Run the following command in the directory containing the `package.json` file:
 npm test
 ```
 
-### With VS Code
+#### Running the Tests with VS Code
 
 This project includes task definitions for Visual Studio Code. Just open the folder containing the `package.json` file in VS Code and then run the task `Run tests`.
 
